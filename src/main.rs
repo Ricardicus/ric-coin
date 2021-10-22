@@ -1,7 +1,9 @@
 use std::io::{stdin,stdout,Write};
 
 mod keygenerator;
-use keygenerator::hash_test;
+use keygenerator::hash_string;
+mod blockchain;
+use blockchain::{Block, CalculateHash};
 
 fn prompt(prompt_text: &str) -> String {
   let mut s = String::new();
@@ -18,7 +20,7 @@ fn prompt(prompt_text: &str) -> String {
 }
 
 fn main() {
-  let hash_me = prompt("Enter what I should hash:\n");
-  let result : String = hash_test(&hash_me); 
+  let block: Block = Block::new("home".to_string(), "dest".to_string(), 1337);
+  let result : String = block.hash(); 
   println!("Hash: {}", result);
 }
