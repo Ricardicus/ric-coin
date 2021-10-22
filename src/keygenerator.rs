@@ -1,13 +1,13 @@
-use hex_literal::hex;
-use sha2::{Sha256, Sha512, Digest};
+//use hex_literal::hex;
+//use sha2::{Sha256, Sha512, Digest};
+use sha2::{Sha256, Digest};
 
-fn hashTest() {
+pub fn hash_test(in_str: &str) -> String {
   // create a Sha256 object
   let mut hasher = Sha256::new();
 
   // write input message
-  hasher.update(b"hello world");
+  hasher.update(in_str);
 
-  // read hash digest and consume hasher
-  let result = hasher.finalize();
+  return format!("{:x}", hasher.finalize());
 }
