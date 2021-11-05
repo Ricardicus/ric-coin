@@ -40,6 +40,16 @@ impl Block {
     self.hash = hash_string(&s);
   }
 
+  pub fn mineBlock(&mut self, difficulty: usize) {
+    let hashCompare: String = String::from_utf8(vec![b'0'; difficulty]).unwrap();
+    let mut hashStart: String = self.hash.chars().take(difficulty).collect();
+    while (!hashCompare.eq(&hashStart)) {
+      self.nonce += 1;
+      self.calcHash();
+      hashStart = self.hash.chars().take(difficulty).collect();
+    }
+    println!("hash: {}, nonce: {}", self.hash, self.nonce);
+  }
 }
 
 impl Printer for Block {

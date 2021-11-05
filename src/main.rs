@@ -20,10 +20,13 @@ fn prompt(prompt_text: &str) -> String {
 }
 
 fn main() {
-  let block: Block = Block::new(
+  let mut block: Block = Block::new(
       "home".to_string(), "dest".to_string(), 1337
   );
-  let result : String = block.print(); 
-  println!("Block:\n{}", result);
+  let difficulty: usize = 4;
+  println!("I got this block:\n{}", block.print());
+  println!("and I will now mine this block with difficulty {}..", difficulty);
+  block.mineBlock(difficulty);
+  println!("Block mined:\n{}", block.print());
   block.print();
 }
