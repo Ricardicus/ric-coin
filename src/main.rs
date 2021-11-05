@@ -3,7 +3,7 @@ use std::io::{stdin,stdout,Write};
 mod keygenerator;
 use keygenerator::hash_string;
 mod blockchain;
-use blockchain::{Block, CalculateHash};
+use blockchain::{Block, Printer};
 
 fn prompt(prompt_text: &str) -> String {
   let mut s = String::new();
@@ -20,7 +20,10 @@ fn prompt(prompt_text: &str) -> String {
 }
 
 fn main() {
-  let block: Block = Block::new("home".to_string(), "dest".to_string(), 1337);
-  let result : String = block.hash(); 
-  println!("Hash: {}", result);
+  let block: Block = Block::new(
+      "home".to_string(), "dest".to_string(), 1337
+  );
+  let result : String = block.print(); 
+  println!("Block:\n{}", result);
+  block.print();
 }
