@@ -1,1 +1,4 @@
+# Vim files
+*.swp
+*/*.swp
 /target
