@@ -21,7 +21,7 @@ fn prompt(prompt_text: &str) -> String {
 
 fn main() {
   let mut block: Block = Block::new(
-      "home".to_string(), "dest".to_string(), 1337
+      Vec::new(), 1337
   );
   let difficulty: usize = 4;
   println!("I got this block:\n{}", block.print());
