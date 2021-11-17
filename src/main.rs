@@ -1,9 +1,11 @@
 mod keygenerator;
-use keygenerator::hash_string;
+use keygenerator::{generate_secp_keys, hash_string};
 mod blockchain;
 use blockchain::{Block, Printer, Transaction};
 
 fn main() {
+  let (secret, public) = generate_secp_keys();
+  println!("secret: {}, public: {}", secret, public);
   let t1: Transaction = Transaction::new(
       "Rickard 1".to_string(), "Rickard 2".to_string(), 1337);
   let mut transactions: Vec<Transaction> = Vec::new();
