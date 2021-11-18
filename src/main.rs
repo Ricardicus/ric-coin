@@ -20,3 +20,4 @@ fn main() {
   println!("Block mined:\n{}", block.print());
   block.print();
 }
+

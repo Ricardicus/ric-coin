@@ -41,8 +41,9 @@ pub fn sign(keys: &KeyMaster, message: String) -> Signature {
   return keys.secp.sign(&message_, &keys.secret_key);
 }
 
-pub fn verify(keys: &KeyMaster, message: Message, signature: Signature) -> bool {
-  return keys.secp.verify(&message, &signature, &keys.public_key).is_ok();
+pub fn verify(keys: &KeyMaster, message: String, signature: Signature) -> bool {
+  let message_ = Message::from_hashed_data::<sha256::Hash>(message.as_bytes());
+  return keys.secp.verify(&message_, &signature, &keys.public_key).is_ok();
 }
 
 pub fn hash_string(in_str: &str) -> String {
