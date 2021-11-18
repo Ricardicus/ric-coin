@@ -1,4 +1,4 @@
-use crate::hash_string;
+use crate::keygenerator::hash_string;
 use chrono;
 
 pub struct Transaction {

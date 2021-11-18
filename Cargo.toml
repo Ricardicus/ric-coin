@@ -9,8 +9,11 @@ edition = "2018"
 sha2 = "0.9.8"
 hex-literal = "0.3.3"
 chrono = "0.4"
-rand = "0.4.3"
+rand = "0.6"
+bitcoin_hashes = "0.10.0"
 
 [dependencies.secp256k1]
-features = ["rand"]
-version = "0.12.0"
+features = ["rand", "bitcoin_hashes"]
+version = "0.20.0"
+
+
