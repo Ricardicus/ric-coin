@@ -1,4 +1,4 @@
-use crate::keygenerator::hash_string;
+use crate::keygenerator::{hash_string, KeyMaster};
 use chrono;
 
 pub struct Transaction {
@@ -6,7 +6,9 @@ pub struct Transaction {
   to_address: String,
   ammount: u64,
   timestamp: String,
-  hash: String
+  hash: String,
+  signature: String,
+  public_key: String
 }
 
 pub struct Block {
@@ -24,6 +26,7 @@ pub trait Printer {
 
 impl Transaction {
   pub fn new(
+      keys: KeyMaster,
       from_address: String,
       to_address: String,
       ammount: u64) -> Transaction {
@@ -32,9 +35,13 @@ impl Transaction {
       ammount : ammount,
       from_address : from_address,
       to_address : to_address,
-      hash : String::new()
+      hash : String::new(),
+      signature: String::new(),
+      public_key: String::new()
     };
     t.calc_hash();
+    t.signature = keys.sign(t.get_hash().to_string());
+    t.public_key = keys.public_key.to_string();
     return t;
   }
 
@@ -46,7 +53,12 @@ impl Transaction {
     s.push_str(&self.timestamp);
     self.hash = hash_string(&s);
   }
+
+  pub fn get_hash(&self) -> &str {
+    return &self.hash[..];
+  }
 }
+
 
 impl Block {
   pub fn new(

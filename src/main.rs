@@ -7,7 +7,7 @@ fn main() {
   let keys = KeyMaster::new();
   println!("secret: {}, public: {}", keys.secret_key, keys.public_key);
   let t1: Transaction = Transaction::new(
-      "Rickard 1".to_string(), "Rickard 2".to_string(), 1337);
+      keys, "Rickard 1".to_string(), "Rickard 2".to_string(), 1337);
   let mut transactions: Vec<Transaction> = Vec::new();
   transactions.push(t1);
   let mut block: Block = Block::new(

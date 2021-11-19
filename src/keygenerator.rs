@@ -38,6 +38,19 @@ impl KeyMaster {
       public_key: public_key.to_string()
     };
   }
+
+  /* Sign a message */
+  pub fn sign(&self, message: String) -> String { 
+    let message_ = Message::from_hashed_data::<sha256::Hash>(message.as_bytes());
+    return self.secp.sign(&message_, &SecretKey::from_str(&self.secret_key[..]).unwrap()).to_string();
+  }
+
+  /* Verify a message */
+  pub fn verify(&self, message: String, signature: String) -> bool {
+    let message_ = Message::from_hashed_data::<sha256::Hash>(message.as_bytes());
+    return self.secp.verify(&message_, &Signature::from_str(&signature[..]).unwrap(),
+      &PublicKey::from_str(&self.public_key[..]).unwrap()).is_ok();
+  }
 }
 
 /* Sign a message */
