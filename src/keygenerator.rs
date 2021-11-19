@@ -53,18 +53,6 @@ impl KeyMaster {
   }
 }
 
-/* Sign a message */
-pub fn sign(keys: &KeyMaster, message: String) -> Signature { 
-  let message_ = Message::from_hashed_data::<sha256::Hash>(message.as_bytes());
-  return keys.secp.sign(&message_, &SecretKey::from_str(&keys.secret_key[..]).unwrap());
-}
-
-/* Verify a message */
-pub fn verify(keys: &KeyMaster, message: String, signature: Signature) -> bool {
-  let message_ = Message::from_hashed_data::<sha256::Hash>(message.as_bytes());
-  return keys.secp.verify(&message_, &signature, &PublicKey::from_str(&keys.public_key[..]).unwrap()).is_ok();
-}
-
 /* sha256 */
 pub fn hash_string(in_str: &str) -> String {
   let mut hasher = Sha256::new();
