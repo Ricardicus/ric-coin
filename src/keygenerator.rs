@@ -10,7 +10,7 @@ use std::str::FromStr;
 pub struct KeyMaster {
   pub secp: Secp256k1<All>,
   pub public_key: String,
-  pub secret_key: String,
+  pub secret_key: String
 }
 
 impl KeyMaster {
@@ -25,6 +25,17 @@ impl KeyMaster {
     let secret_key_str_two = secret_key_from_str.to_string();
     println!("secret_key_to_str: {}", secret_key_str);
     println!("secret_key_back:   {}", secret_key_str_two);*/
+    return KeyMaster {
+      secp: secp,
+      secret_key: secret_key.to_string(),
+      public_key: public_key.to_string()
+    };
+  }
+
+  pub fn holding_these(secret_key: &str, public_key: &str) -> KeyMaster {
+    let secp = Secp256k1::new();
+    let secret_key = SecretKey::from_str(secret_key).unwrap();
+    let public_key = PublicKey::from_str(public_key).unwrap();
     return KeyMaster {
       secp: secp,
       secret_key: secret_key.to_string(),
