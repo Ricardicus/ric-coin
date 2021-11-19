@@ -13,18 +13,13 @@ pub struct KeyMaster {
   pub secret_key: String
 }
 
+/* Keymaster holds the keys for the transactions */
 impl KeyMaster {
   pub fn new() -> KeyMaster {
     let secp = Secp256k1::new();
     let mut rng = OsRng::new().expect("OsRng");
     let secret_key = SecretKey::new(&mut rng);
     let public_key = PublicKey::from_secret_key(&secp, &secret_key);
-    /*let secret_key_str = secret_key.to_string();
-    let secret_key_from_str = SecretKey::from_str(&secret_key_str[..])
-        .expect("Failed");
-    let secret_key_str_two = secret_key_from_str.to_string();
-    println!("secret_key_to_str: {}", secret_key_str);
-    println!("secret_key_back:   {}", secret_key_str_two);*/
     return KeyMaster {
       secp: secp,
       secret_key: secret_key.to_string(),
@@ -32,6 +27,7 @@ impl KeyMaster {
     };
   }
 
+  /* To start it from already generated values */
   pub fn holding_these(secret_key: &str, public_key: &str) -> KeyMaster {
     let secp = Secp256k1::new();
     let secret_key = SecretKey::from_str(secret_key).unwrap();
@@ -44,31 +40,22 @@ impl KeyMaster {
   }
 }
 
-pub fn generate_secp_keys() -> (SecretKey, PublicKey) {
-  let secp = Secp256k1::new();
-  let mut rng = OsRng::new().expect("OsRng");
-  let secret_key = SecretKey::new(&mut rng);
-  let public_key = PublicKey::from_secret_key(&secp, &secret_key);
-  return (secret_key, public_key);
-}
-
+/* Sign a message */
 pub fn sign(keys: &KeyMaster, message: String) -> Signature { 
   let message_ = Message::from_hashed_data::<sha256::Hash>(message.as_bytes());
   return keys.secp.sign(&message_, &SecretKey::from_str(&keys.secret_key[..]).unwrap());
 }
 
+/* Verify a message */
 pub fn verify(keys: &KeyMaster, message: String, signature: Signature) -> bool {
   let message_ = Message::from_hashed_data::<sha256::Hash>(message.as_bytes());
   return keys.secp.verify(&message_, &signature, &PublicKey::from_str(&keys.public_key[..]).unwrap()).is_ok();
 }
 
+/* sha256 */
 pub fn hash_string(in_str: &str) -> String {
-  // create a Sha256 object
   let mut hasher = Sha256::new();
-
-  // write input message
   hasher.update(in_str);
-
   return format!("{:x}", hasher.finalize());
 }
 
