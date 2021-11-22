@@ -19,6 +19,10 @@ pub struct Block {
   transactions: Vec<Transaction>
 }
 
+pub struct Blockchain {
+  blocks: Vec<Block>
+}
+
 pub trait Printer {
   fn print(&self) -> String;
 }
@@ -66,7 +70,7 @@ impl Block {
       nonce : 0,
       hash: String::new(),
       previous_hash: String::new(),
-      transactions: Vec::new()
+      transactions: Vec::<Transaction>::new()
     };
     b.calc_hash();
     return b;
@@ -111,6 +115,7 @@ impl Block {
 
   pub fn set_previous_hash(&mut self, hash: &str) {
     self.previous_hash = hash.to_string();
+    self.calc_hash();
   }
 
   pub fn get_hash(&self) -> &str {
@@ -119,20 +124,51 @@ impl Block {
 
 }
 
+impl Blockchain {
+  pub fn new() -> Blockchain {
+    return Blockchain {
+      blocks: Vec::<Block>::new() 
+    };
+  }
+
+  pub fn add_block(&mut self, mut block: Block) {
+    self.blocks.last().map(|b| block.set_previous_hash(b.get_hash()));
+    self.blocks.push(block);
+  }
+}
+
 impl Printer for Block {
   fn print(&self) -> String {
     return format!(
-      "[Transactions: {}, Timestamp: {}, Nonce: {}, Hash: {}, PreviousHash: {}]",
+      "{{Transactions: {}, Timestamp: {}, Nonce: {}, Hash: {}, PreviousHash: {}}}",
       self.get_transactions(), self.timestamp, self.nonce, self.hash, self.previous_hash);
   }
 }
 
 impl Printer for Transaction {
   fn print(&self) -> String {
-    return format!("[From: {}, To: {}, Ammount: {}, \
-Key: {}, Timestamp: {}, Hash: {}, Signature: {}]",
+    return format!("{{From: {}, To: {}, Ammount: {}, \
+Key: {}, Timestamp: {}, Hash: {}, Signature: {}}}",
       self.from_address, self.to_address, self.ammount,
       self.public_key, self.timestamp, self.hash, self.signature);
+  }
+}
+
+impl Printer for Blockchain {
+  fn print(&self) -> String {
+    let mut s: String = String::new();
+    for block in self.blocks.iter() {
+        if s.len() == 0 {
+            s.push_str("[");
+        } else {
+            s.push_str(",");
+        }
+        s.push_str(block.print().as_str());
+    }
+    if s.len() > 0 {
+        s.push_str("]");
+    }
+    return s;
   }
 }
 
