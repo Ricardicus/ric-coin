@@ -108,6 +108,15 @@ impl Block {
       hash_start = self.hash.chars().take(difficulty).collect();
     }
   }
+
+  pub fn set_previous_hash(&mut self, hash: &str) {
+    self.previous_hash = hash.to_string();
+  }
+
+  pub fn get_hash(&self) -> &str {
+    return &self.hash[..];
+  }
+
 }
 
 impl Printer for Block {
