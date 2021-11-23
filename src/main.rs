@@ -15,16 +15,18 @@ fn main() {
   block.add_transaction(t1);
   block.add_transaction(t2);
   let difficulty: usize = 4;
+  let mut blockchain: Blockchain = Blockchain::new();
+
   println!("I got this block:\n{}", block.print());
   println!("and I will now mine this block with difficulty {}..", difficulty);
+  block.set_previous_hash(blockchain.get_last_hash().expect("No genesis block"));
   block.mine_block(difficulty);
   println!("Block mined:\n{}", block.print());
   block.print();
 
-  let mut blockchain: Blockchain = Blockchain::new();
   blockchain.add_block(block).expect("Adding a block");
   println!("Blockchain with one block: {}", blockchain.print());
-  
+
   let t3: Transaction = Transaction::new(
       &keys, "Rickard 1".to_string(), "Rickard 2".to_string(), 1337);
   let t4: Transaction = Transaction::new(

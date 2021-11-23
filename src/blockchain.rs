@@ -1,6 +1,7 @@
 use crate::keygenerator::{hash_string, KeyMaster};
 use chrono;
 
+#[derive(Clone)]
 pub struct Transaction {
   from_address: String,
   to_address: String,
@@ -11,6 +12,7 @@ pub struct Transaction {
   public_key: String
 }
 
+#[derive(Clone)]
 pub struct Block {
   timestamp: String,
   nonce: u64,
@@ -20,7 +22,9 @@ pub struct Block {
 }
 
 pub struct Blockchain {
-  blocks: Vec<Block>
+  blocks: Vec<Block>,
+  mining_reward: u64,
+  difficulty: usize
 }
 
 pub trait Printer {
@@ -100,13 +104,13 @@ impl Block {
     return s;
   }
 
-  pub fn calc_hash(&mut self) {
+  pub fn calc_hash(&mut self) -> String {
     let mut s: String = String::new();
     s.push_str(&self.get_transactions());
     s.push_str(&self.timestamp);
     s.push_str(&self.nonce.to_string());
     s.push_str(&self.previous_hash);
-    self.hash = hash_string(&s);
+    return hash_string(&s);
   }
 
   pub fn mine_block(&mut self, difficulty: usize) {
@@ -114,7 +118,7 @@ impl Block {
     let mut hash_start: String = self.hash.chars().take(difficulty).collect();
     while !hash_compare.eq(&hash_start) {
       self.nonce += 1;
-      self.calc_hash();
+      self.hash = self.calc_hash();
       hash_start = self.hash.chars().take(difficulty).collect();
     }
   }
@@ -143,13 +147,26 @@ impl Block {
 
 impl Blockchain {
   pub fn new() -> Blockchain {
-    return Blockchain {
-      blocks: Vec::<Block>::new() 
+    let mut blockchain: Blockchain = Blockchain {
+      blocks: Vec::<Block>::new(),
+      mining_reward: 10,
+      difficulty: 4
     };
+    let genesis: Block = blockchain.create_genesis_block();
+    blockchain.blocks.clear();
+    blockchain.blocks.push(genesis);
+    return blockchain;
+  }
+
+  pub fn create_genesis_block(&self) -> Block {
+    let mut genesis_block: Block = Block::new();
+    genesis_block.timestamp = "Beginning of time".to_string();
+    genesis_block.hash = genesis_block.calc_hash();
+    return genesis_block;
   }
 
   pub fn add_block(&mut self, block: Block) -> Result<&'static str, &'static str> {
-      match self.get_last_hash() {
+    match self.get_last_hash() {
       Err(_) => {
         // empty chain, just add
         self.blocks.push(block);
@@ -174,6 +191,12 @@ impl Blockchain {
   }
 
   pub fn verify(&self) -> bool {
+    let genesis = self.create_genesis_block();
+    let first: Block = self.blocks[0].clone();
+
+    if genesis != first {
+      return false;
+    }
     let mut previous_block: Option<&Block> = None;
     for block in self.blocks.iter() {
       if ! block.verify() {
@@ -192,8 +215,6 @@ impl Blockchain {
     }
     return true;
   }
-
-
 }
 
 impl Printer for Block {
@@ -231,4 +252,15 @@ impl Printer for Blockchain {
   }
 }
 
+impl PartialEq<Block> for Block {
+  fn eq(&self, other: &Block) -> bool {
+    if self.timestamp[..].eq(&other.timestamp[..]) &&
+      self.hash[..].eq(&other.hash[..]) &&
+      self.previous_hash[..].eq(&other.previous_hash[..]) &&
+      self.get_transactions().eq(&other.get_transactions()) {
+      return true;
+    }
+    return false;
+  }
+}
 
