@@ -49,7 +49,7 @@ impl Transaction {
       public_key: String::new()
     };
     t.calc_hash();
-    t.signature = keys.sign(t.get_hash().to_string());
+    t.signature = keys.sign(t.hash.to_string());
     t.public_key = keys.public_key.to_string();
     return t;
   }
@@ -60,7 +60,6 @@ impl Transaction {
     s.push_str(&self.to_address);
     s.push_str(&self.ammount.to_string());
     s.push_str(&self.timestamp);
-    s.push_str(&self.public_key);
     self.hash = hash_string(&s);
   }
 
@@ -68,13 +67,15 @@ impl Transaction {
     return &self.hash[..];
   }
 
-  pub fn verify(&self) -> bool {
-    let keys: KeyMaster = KeyMaster::new_verifier(self.public_key.clone());
+  pub fn verify(&self, keys: &KeyMaster) -> bool {
     let message: String = self.hash.to_string();  
-    if self.ammount < 0 {
+    if self.ammount == 0 {
       return false;
     }
-    return keys.verify(message, self.signature.clone());
+    if keys.verify(message.clone(), self.signature.clone()) {
+      return true;
+    }
+    return false;
   }
 }
 
@@ -140,9 +141,9 @@ impl Block {
     return &self.hash[..];
   }
  
-  pub fn verify(&self) -> bool {
+  pub fn verify(&self, keys: &KeyMaster) -> bool {
     for transaction in self.transactions.iter() {
-      if ! transaction.verify() {
+      if ! transaction.verify(keys) {
         return false;
       }
     }
@@ -208,9 +209,10 @@ impl Blockchain {
     if genesis != first {
       return false;
     }
+
     let mut previous_block: Option<&Block> = None;
-    for block in self.blocks.iter() {
-      if ! block.verify() {
+    for block in self.blocks.iter().skip(1) {
+      if ! block.verify(&self.keys) {
         return false;
       }
       match previous_block {
@@ -228,7 +230,7 @@ impl Blockchain {
   }
 
   pub fn add_transaction(&mut self, transaction: Transaction) -> Result<&'static str, &'static str> {
-    if transaction.verify() {
+    if !transaction.verify(&self.keys) {
       return Err("Invalid transaction");
     }
     self.pending_transactions.push(transaction);
