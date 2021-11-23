@@ -17,4 +17,7 @@ My key insights:
 * Desire is mimetic
   * Once you recognize what others want, to take a stake in a blockchain, your desire for the same is invoked.
 
+* Proof of work is brute force
+  * Not as sophisticated as one might think, it is just hash value checking after incrementing a value.
+
 
