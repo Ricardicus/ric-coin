@@ -30,16 +30,16 @@ fn main() {
   let mut t4: Transaction = Transaction::new(
       &keys, "Rickard 2".to_string(), "Rickard 1".to_string(), 1337);
   
-  block = Block::new();
-  block.add_transaction(t3);
-  block.add_transaction(t4);
-  println!("I got this new block:\n{}", block.print());
+  let mut block2: Block = Block::new();
+  block2.add_transaction(t3);
+  block2.add_transaction(t4); 
+  block2.set_previous_hash(blockchain.get_last_hash().unwrap());
+  println!("I got this new block:\n{}", block2.print());
   println!("and I will now mine this block with difficulty {}..", difficulty);
-  block.mine_block(difficulty);
-  println!("Block mined:\n{}", block.print());
-  block.print();
+  block2.mine_block(difficulty);
+  println!("Block mined:\n{}", block2.print());
 
-  blockchain.add_block(block);
+  blockchain.add_block(block2);
   println!("Blockchain with two blocks: {}", blockchain.print());
   
 

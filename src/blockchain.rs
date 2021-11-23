@@ -77,7 +77,7 @@ impl Block {
   }
 
   pub fn add_transaction(&mut self, transaction: Transaction) {
-   self.transactions.push(transaction);
+    self.transactions.push(transaction);
   }
 
   pub fn get_transactions(&self) -> String {
@@ -115,13 +115,15 @@ impl Block {
 
   pub fn set_previous_hash(&mut self, hash: &str) {
     self.previous_hash = hash.to_string();
-    self.calc_hash();
+  }
+
+  pub fn get_previous_hash(&self) -> &str {
+    return &self.previous_hash[..];
   }
 
   pub fn get_hash(&self) -> &str {
     return &self.hash[..];
   }
-
 }
 
 impl Blockchain {
@@ -131,9 +133,33 @@ impl Blockchain {
     };
   }
 
-  pub fn add_block(&mut self, mut block: Block) {
-    self.blocks.last().map(|b| block.set_previous_hash(b.get_hash()));
-    self.blocks.push(block);
+  pub fn add_block(&mut self, block: Block) -> Result<&'static str, &'static str> {
+      match self.get_last_hash() {
+      Err(s) => {
+        // empty chain, just add
+        self.blocks.push(block);
+        return Ok("Block added to the chain");
+      },
+      Ok(h) => {
+        // chain not empty, check correct
+        if h.eq(block.get_previous_hash()) {
+          self.blocks.push(block);
+          return Ok("Block added to the chain");
+        }
+      }
+    }
+    return Err("Invalid block");
+  }
+
+  pub fn len(&self) -> usize {
+    return self.blocks.len();
+  }
+
+  pub fn get_last_hash(&self) -> Result<&str, &'static str> {
+    match self.blocks.last() {
+        None => Err("No blocks in the chain"),
+        Some(b) => Ok(b.get_hash()) 
+    }
   }
 }
 
