@@ -22,12 +22,12 @@ fn main() {
   block.print();
 
   let mut blockchain: Blockchain = Blockchain::new();
-  blockchain.add_block(block);
+  blockchain.add_block(block).expect("Adding a block");
   println!("Blockchain with one block: {}", blockchain.print());
   
-  let mut t3: Transaction = Transaction::new(
+  let t3: Transaction = Transaction::new(
       &keys, "Rickard 1".to_string(), "Rickard 2".to_string(), 1337);
-  let mut t4: Transaction = Transaction::new(
+  let t4: Transaction = Transaction::new(
       &keys, "Rickard 2".to_string(), "Rickard 1".to_string(), 1337);
   
   let mut block2: Block = Block::new();
@@ -39,10 +39,9 @@ fn main() {
   block2.mine_block(difficulty);
   println!("Block mined:\n{}", block2.print());
 
-  blockchain.add_block(block2);
+  blockchain.add_block(block2).expect("Adding a block");
   println!("Blockchain with two blocks: {}", blockchain.print());
   
-
-
+  println!("Blockchain valid? {}", blockchain.verify());
 }
 

@@ -61,6 +61,12 @@ impl Transaction {
   pub fn get_hash(&self) -> &str {
     return &self.hash[..];
   }
+
+  pub fn verify(&self) -> bool {
+    let keys: KeyMaster = KeyMaster::new_verifier(self.public_key.clone());
+    let message: String = self.hash.to_string();  
+    return keys.verify(message, self.signature.clone());
+  }
 }
 
 impl Block {
@@ -124,6 +130,15 @@ impl Block {
   pub fn get_hash(&self) -> &str {
     return &self.hash[..];
   }
+ 
+  pub fn verify(&self) -> bool {
+    for transaction in self.transactions.iter() {
+      if ! transaction.verify() {
+        return false;
+      }
+    }
+    return true;
+  }
 }
 
 impl Blockchain {
@@ -135,7 +150,7 @@ impl Blockchain {
 
   pub fn add_block(&mut self, block: Block) -> Result<&'static str, &'static str> {
       match self.get_last_hash() {
-      Err(s) => {
+      Err(_) => {
         // empty chain, just add
         self.blocks.push(block);
         return Ok("Block added to the chain");
@@ -151,16 +166,23 @@ impl Blockchain {
     return Err("Invalid block");
   }
 
-  pub fn len(&self) -> usize {
-    return self.blocks.len();
-  }
-
   pub fn get_last_hash(&self) -> Result<&str, &'static str> {
     match self.blocks.last() {
         None => Err("No blocks in the chain"),
         Some(b) => Ok(b.get_hash()) 
     }
   }
+
+  pub fn verify(&self) -> bool {
+    for block in self.blocks.iter() {
+      if ! block.verify() {
+        return false;
+      }
+    }
+    return true;
+  }
+
+
 }
 
 impl Printer for Block {

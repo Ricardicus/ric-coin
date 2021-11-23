@@ -39,6 +39,15 @@ impl KeyMaster {
     };
   }
 
+  pub fn new_verifier(public_key: String) -> KeyMaster {
+    let secp = Secp256k1::new();
+    return KeyMaster {
+      secp: secp,
+      public_key: public_key.clone(),
+      secret_key: String::new()
+    };
+  }
+
   /* Sign a message */
   pub fn sign(&self, message: String) -> String { 
     let message_ = Message::from_hashed_data::<sha256::Hash>(message.as_bytes());
