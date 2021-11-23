@@ -174,10 +174,21 @@ impl Blockchain {
   }
 
   pub fn verify(&self) -> bool {
+    let mut previous_block: Option<&Block> = None;
     for block in self.blocks.iter() {
       if ! block.verify() {
         return false;
       }
+      match previous_block {
+        None => (),
+        Some(b) => {
+          if !block.previous_hash.eq(&b.hash[..]) {
+            println!("prev_block hash {}, block previous_hash {}", &block.previous_hash[..], &b.hash[..]);
+            return false;
+          }
+        }
+      }
+      previous_block = Some(block);
     }
     return true;
   }
