@@ -24,7 +24,9 @@ pub struct Block {
 pub struct Blockchain {
   blocks: Vec<Block>,
   mining_reward: u64,
-  difficulty: usize
+  difficulty: usize,
+  pending_transactions: Vec<Transaction>,
+  keys: KeyMaster
 }
 
 pub trait Printer {
@@ -69,6 +71,9 @@ impl Transaction {
   pub fn verify(&self) -> bool {
     let keys: KeyMaster = KeyMaster::new_verifier(self.public_key.clone());
     let message: String = self.hash.to_string();  
+    if self.ammount < 0 {
+      return false;
+    }
     return keys.verify(message, self.signature.clone());
   }
 }
@@ -146,16 +151,22 @@ impl Block {
 }
 
 impl Blockchain {
-  pub fn new() -> Blockchain {
+  pub fn new(keys: KeyMaster) -> Blockchain {
     let mut blockchain: Blockchain = Blockchain {
+      keys: keys,
       blocks: Vec::<Block>::new(),
       mining_reward: 10,
-      difficulty: 4
+      difficulty: 4,
+      pending_transactions: Vec::<Transaction>::new()
     };
     let genesis: Block = blockchain.create_genesis_block();
     blockchain.blocks.clear();
     blockchain.blocks.push(genesis);
     return blockchain;
+  }
+
+  pub fn get_keys(&self) -> &KeyMaster {
+    return &self.keys;
   }
 
   pub fn create_genesis_block(&self) -> Block {
@@ -214,6 +225,28 @@ impl Blockchain {
       previous_block = Some(block);
     }
     return true;
+  }
+
+  pub fn add_transaction(&mut self, transaction: Transaction) -> Result<&'static str, &'static str> {
+    if transaction.verify() {
+      return Err("Invalid transaction");
+    }
+    self.pending_transactions.push(transaction);
+    return Ok("Transaction added");
+  }
+
+  pub fn mine_pending_transactions(&mut self, reward_address: String) {
+    let reward: Transaction = Transaction::new(
+        &self.keys, "".to_string(), reward_address, self.mining_reward);
+    let mut block = Block::new();
+    block.add_transaction(reward);
+    for transaction in self.pending_transactions.iter() {
+      block.add_transaction(transaction.clone());
+    }
+    block.set_previous_hash(self.get_last_hash().expect("No genesis block"));
+    block.mine_block(self.difficulty);
+    self.blocks.push(block);
+    self.pending_transactions.clear();
   }
 }
 
