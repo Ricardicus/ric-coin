@@ -1,7 +1,6 @@
 # Block chain with amount transfers 
 
-All this talk about blockchains saving the digital world from integrity
-problems made me want to dig into the workings of it. I use Secp265k1 crypto
+All the talk about blockchains made me want to dig into the workings of it. I use Secp265k1 crypto
 to sign transfers. I was inspired by [SavjeeCoin](https://github.com/Savjee/SavjeeCoin) and 
 the YouTube series explaining the basics of how a blockchain works.
 Instead of JavaScript, I implement this in Rust.
