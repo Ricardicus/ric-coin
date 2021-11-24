@@ -13,9 +13,7 @@ My key insights:
 
 * Value is mimetic; you want what others want.
   * Take part in this or that blockchain does not really matter, unless it is *the one many people wants to be part of too*. 
-
-* Desire is mimetic
-  * Once you recognize what others want, to take a stake in a blockchain, your desire for the same is invoked.
+  * Once you recognize what others want, to take a stake in a certain blockchain, your desire for the same is invoked.
 
 * Proof of work is brute force
   * Not as sophisticated as one might think, it is just hash value checking after incrementing a value.
