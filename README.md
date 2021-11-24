@@ -12,7 +12,7 @@ My key insights:
   * once it has been revealed; one can make multiple chains by copying the algorithm.
 
 * Value is mimetic; you want what others want.
-  * Take part in this or that blockchain does not really matter, unless it is *the one many people wants to be part of too*. 
+  * Take part in this or that blockchain does not really matter, unless it is *the one many people wants to be a part of too*. 
   * Once you recognize what others want, to take a stake in a certain blockchain, your desire for the same is invoked.
 
 * Proof of work is brute force
