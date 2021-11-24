@@ -51,6 +51,14 @@ impl KeyMaster {
     return self.secp.verify(&message_, &Signature::from_str(&signature[..]).unwrap(),
       &PublicKey::from_str(&self.public_key[..]).unwrap()).is_ok();
   }
+  
+  /* Verify a message using another public key */
+  pub fn verify_with_public_key(&self, public_key: String, message: String, signature: String) -> bool {
+    let message_ = Message::from_hashed_data::<sha256::Hash>(message.as_bytes());
+    return self.secp.verify(&message_, &Signature::from_str(&signature[..]).unwrap(),
+      &PublicKey::from_str(&public_key[..]).unwrap()).is_ok();
+  }
+ 
 }
 
 /* sha256 */

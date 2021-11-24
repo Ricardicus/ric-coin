@@ -25,8 +25,7 @@ pub struct Blockchain {
   blocks: Vec<Block>,
   mining_reward: u64,
   difficulty: usize,
-  pending_transactions: Vec<Transaction>,
-  keys: KeyMaster
+  pending_transactions: Vec<Transaction>
 }
 
 pub trait Printer {
@@ -67,12 +66,14 @@ impl Transaction {
     return &self.hash[..];
   }
 
-  pub fn verify(&self, keys: &KeyMaster) -> bool {
+  pub fn verify(&self) -> bool {
     let message: String = self.hash.to_string();  
     if self.ammount == 0 {
       return false;
     }
-    if keys.verify(message.clone(), self.signature.clone()) {
+    let keys = KeyMaster::new();
+
+    if keys.verify_with_public_key(self.public_key.clone(), message.clone(), self.signature.clone()) {
       return true;
     }
     return false;
@@ -141,9 +142,9 @@ impl Block {
     return &self.hash[..];
   }
  
-  pub fn verify(&self, keys: &KeyMaster) -> bool {
+  pub fn verify(&self) -> bool {
     for transaction in self.transactions.iter() {
-      if ! transaction.verify(keys) {
+      if ! transaction.verify() {
         return false;
       }
     }
@@ -152,9 +153,8 @@ impl Block {
 }
 
 impl Blockchain {
-  pub fn new(keys: KeyMaster) -> Blockchain {
+  pub fn new() -> Blockchain {
     let mut blockchain: Blockchain = Blockchain {
-      keys: keys,
       blocks: Vec::<Block>::new(),
       mining_reward: 10,
       difficulty: 4,
@@ -164,10 +164,6 @@ impl Blockchain {
     blockchain.blocks.clear();
     blockchain.blocks.push(genesis);
     return blockchain;
-  }
-
-  pub fn get_keys(&self) -> &KeyMaster {
-    return &self.keys;
   }
 
   pub fn create_genesis_block(&self) -> Block {
@@ -212,7 +208,7 @@ impl Blockchain {
 
     let mut previous_block: Option<&Block> = None;
     for block in self.blocks.iter().skip(1) {
-      if ! block.verify(&self.keys) {
+      if ! block.verify() {
         return false;
       }
       match previous_block {
@@ -230,16 +226,16 @@ impl Blockchain {
   }
 
   pub fn add_transaction(&mut self, transaction: Transaction) -> Result<&'static str, &'static str> {
-    if !transaction.verify(&self.keys) {
+    if !transaction.verify() {
       return Err("Invalid transaction");
     }
     self.pending_transactions.push(transaction);
     return Ok("Transaction added");
   }
 
-  pub fn mine_pending_transactions(&mut self, reward_address: String) {
+  pub fn mine_pending_transactions(&mut self, keys: &KeyMaster, reward_address: String) {
     let reward: Transaction = Transaction::new(
-        &self.keys, "".to_string(), reward_address, self.mining_reward);
+        keys, "".to_string(), reward_address, self.mining_reward);
     let mut block = Block::new();
     block.add_transaction(reward);
     for transaction in self.pending_transactions.iter() {
