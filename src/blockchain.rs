@@ -225,13 +225,25 @@ impl Blockchain {
     if !transaction.verify() {
       return Err("Invalid transaction");
     }
+
+    match self.get_balance(&transaction.public_key[..]) {
+      Ok(balance) => {
+        if balance < transaction.ammount {
+          return Err("Insufficient funds."); 
+        }
+      },
+      Err(s) => {
+        return Err(s);
+      }
+    }
+
     self.pending_transactions.push(transaction);
     return Ok("Transaction added");
   }
 
   pub fn mine_pending_transactions(&mut self, keys: &KeyMaster, reward_address: String) {
     let reward: Transaction = Transaction::new(
-        keys, reward_address, self.mining_reward);
+        keys, reward_address.clone(), self.mining_reward);
     let mut block = Block::new();
     block.add_transaction(reward);
     for transaction in self.pending_transactions.iter() {
@@ -241,6 +253,25 @@ impl Blockchain {
     block.mine_block(self.difficulty);
     self.blocks.push(block);
     self.pending_transactions.clear();
+  }
+
+  pub fn get_balance(&self, address: &str) -> Result<u64, &'static str> {
+    let mut balance: u64 = 0;
+    for block in self.blocks.iter().skip(1) {
+      for transaction in block.transactions.iter() {
+        if transaction.to_address.eq(address) {
+          balance += transaction.ammount;
+        }
+        // public key is 'from_address'
+        else if transaction.public_key.eq(address) {
+          if transaction.ammount > balance {
+            return Err("Invalid chain");
+          }
+          balance -= transaction.ammount;
+        }
+      }
+    }
+    return Ok(balance);
   }
 }
 
