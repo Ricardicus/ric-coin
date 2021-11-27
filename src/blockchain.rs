@@ -68,11 +68,7 @@ impl Transaction {
       return false;
     }
     let keys = KeyMaster::new();
-
-    if keys.verify_with_public_key(self.public_key.clone(), message.clone(), self.signature.clone()) {
-      return true;
-    }
-    return false;
+    return keys.verify_with_public_key(self.public_key.clone(), message.clone(), self.signature.clone()); 
   }
 }
 
