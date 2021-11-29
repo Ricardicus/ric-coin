@@ -103,7 +103,7 @@ impl Block {
     return s;
   }
 
-  pub fn calc_hash(&mut self) -> String {
+  pub fn calc_hash(&self) -> String {
     let mut s: String = String::new();
     s.push_str(&self.get_transactions());
     s.push_str(&self.timestamp);
@@ -140,7 +140,9 @@ impl Block {
         return false;
       }
     }
-    return true;
+
+    let hash_string: String = self.calc_hash();
+    return self.get_hash().eq(&hash_string[..]);
   }
 }
 
