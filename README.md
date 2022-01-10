@@ -18,6 +18,8 @@ My key insights:
   * Not as sophisticated as one might think, it is just hash value checking after incrementing a value.
 
 * A private secp265k1 key is pretty safe
+  * There is no sophisticated way to solve for the private key. There exists some, but only if the key is used multiple times. One has to resort to brute force, which takes an unreasonable amount of time.
+  
   * Even if it was brute forced, values are transferred from key-pair to key-pair, so they move.
 
 * Generating the same keys if very unlikely
