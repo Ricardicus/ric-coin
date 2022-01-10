@@ -17,4 +17,9 @@ My key insights:
 * Proof of work is brute force
   * Not as sophisticated as one might think, it is just hash value checking after incrementing a value.
 
+* A private secp265k1 key is pretty safe
+  * Even if it was brute forced, values are transferred from key-pair to key-pair, so they move.
+
+* Generating the same keys if very unlikely
+  * It can happen, but it is very very unlikely.
 
