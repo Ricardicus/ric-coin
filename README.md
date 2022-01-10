@@ -8,7 +8,7 @@ Instead of JavaScript, I implement this in Rust.
 My key insights:
 
 * It is not so much about the algorithm itself
-  * once it has been revealed; one can make multiple chains by copying the algorithm.
+  * once it has been revealed; one can make multiple chains by copying or modifying the algorithm.
 
 * Value is mimetic; you want what others want.
   * Take part in this or that blockchain does not really matter, unless it is *the one many people wants to be a part of too*. 
