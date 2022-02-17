@@ -23,5 +23,5 @@ My key insights:
   * Even if it was brute forced, values are transferred from key-pair to key-pair, so they move.
 
 * Generating the same keys if very unlikely
-  * It can happen, but it is very very unlikely.
+  * It can happen, but it is apparently very [unlikely to do so](https://crypto.stackexchange.com/questions/85861/cryptographic-limit-to-total-accounts-in-secp256k1). 
 
