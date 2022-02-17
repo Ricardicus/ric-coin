@@ -10,7 +10,7 @@ My key insights:
 * It is not so much about the algorithm itself
   * once it has been revealed; one can make multiple chains by copying or modifying the algorithm.
 
-* Value is mimetic; people desire what others desire.
+* Desire is mimetic; people desire what others desire.
   * Take part in this or that blockchain does not really matter, unless it is *the one many people wants to be a part of too*. 
   * Once people recognize what others want, to take a stake in a certain blockchain, their own desire for the same is invoked.
 
